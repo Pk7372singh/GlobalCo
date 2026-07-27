@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -13,9 +13,18 @@ import {
   Notification,
 } from "@/data/notifications";
 
-import { Heart, MessageCircle, UserPlus, Bell } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  UserPlus,
+  Bell,
+} from "lucide-react";
 
-function NotificationIcon({ type }: { type: string }) {
+function NotificationIcon({
+  type,
+}: {
+  type: string;
+}) {
   if (type === "like") {
     return (
       <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 text-red-600">
@@ -48,34 +57,42 @@ function NotificationIcon({ type }: { type: string }) {
 }
 
 export default function NotificationsPage() {
-  const [items, setItems] = useState<Notification[]>([]);
+  const [items, setItems] = useState<Notification[]>(() => {
+    if (typeof window === "undefined") {
+      return notificationData;
+    }
 
-  useEffect(() => {
     const savedNotifications = localStorage.getItem("notifications");
 
     if (savedNotifications) {
-      setItems(JSON.parse(savedNotifications));
-    } else {
-      setItems(notificationData);
-
-      localStorage.setItem("notifications", JSON.stringify(notificationData));
+      return JSON.parse(savedNotifications);
     }
-  }, []);
+
+    localStorage.setItem(
+      "notifications",
+      JSON.stringify(notificationData),
+    );
+
+    return notificationData;
+  });
 
   function markAllRead() {
     const updatedNotifications = items.map((item) => ({
       ...item,
-
       unread: false,
     }));
 
     setItems(updatedNotifications);
 
-    localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+    localStorage.setItem(
+      "notifications",
+      JSON.stringify(updatedNotifications),
+    );
 
-    // navbar count reset
-
-    localStorage.setItem("notification-count", "0");
+    localStorage.setItem(
+      "notification-count",
+      "0",
+    );
   }
 
   return (
@@ -105,15 +122,11 @@ export default function NotificationsPage() {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex items-start gap-4 rounded-xl border p-4 transition
-
-                    ${
-                      item.unread
-                        ? "border-blue-200 bg-blue-50"
-                        : "border-slate-200 bg-white"
-                    }
-
-                    `}
+                  className={`flex items-start gap-4 rounded-xl border p-4 transition ${
+                    item.unread
+                      ? "border-blue-200 bg-blue-50"
+                      : "border-slate-200 bg-white"
+                  }`}
                 >
                   <NotificationIcon type={item.type} />
 
@@ -134,7 +147,9 @@ export default function NotificationsPage() {
                       {item.description}
                     </p>
 
-                    <p className="mt-2 text-xs text-slate-400">{item.time}</p>
+                    <p className="mt-2 text-xs text-slate-400">
+                      {item.time}
+                    </p>
                   </div>
                 </div>
               ))}

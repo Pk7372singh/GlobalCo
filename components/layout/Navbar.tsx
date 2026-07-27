@@ -2,24 +2,29 @@
 
 import Link from "next/link";
 import { Menu, X, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Button from "@/components/common/Button";
 
+type User = {
+  name: string;
+  email: string;
+  username?: string;
+};
+
 export default function Navbar() {
   const router = useRouter();
 
-  const [user, setUser] = useState<any>(null);
-  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window === "undefined") return null;
 
-  useEffect(() => {
     const storedUser = localStorage.getItem("connecthub-user");
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const [open, setOpen] = useState(false);
 
   function handleLogout() {
     localStorage.removeItem("connecthub-user");
@@ -81,10 +86,12 @@ export default function Navbar() {
             <>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">
-                  {user.name?.charAt(0)}
+                  {user.name.charAt(0).toUpperCase()}
                 </div>
 
-                <span className="font-medium text-slate-700">{user.name}</span>
+                <span className="font-medium text-slate-700">
+                  {user.name}
+                </span>
               </div>
 
               <button
@@ -104,7 +111,9 @@ export default function Navbar() {
                 Login
               </Link>
 
-              <Button href="/auth/signup">Get Started</Button>
+              <Button href="/auth/signup">
+                Get Started
+              </Button>
             </>
           )}
         </div>
@@ -156,14 +165,30 @@ export default function Navbar() {
               Profile
             </Link>
 
-            {user && (
+            {user ? (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 rounded-xl px-4 py-3 text-red-600 hover:bg-red-50"
+                className="mt-3 flex items-center gap-2 rounded-xl px-4 py-3 text-red-600 hover:bg-red-50"
               >
                 <LogOut size={18} />
                 Logout
               </button>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="rounded-xl px-4 py-3 font-medium text-slate-700 hover:bg-blue-50"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/auth/signup"
+                  className="rounded-xl bg-blue-600 px-4 py-3 text-center font-medium text-white hover:bg-blue-700"
+                >
+                  Get Started
+                </Link>
+              </>
             )}
           </nav>
         </div>

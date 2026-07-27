@@ -84,7 +84,7 @@ export default function LoginPage() {
         </button>
 
         <p className="mt-8 text-center text-sm text-slate-600">
-          Don't have an account?
+        Don&apos;t have an account?
           <Link
             href="/auth/signup"
             className="ml-2 font-semibold text-indigo-600"
