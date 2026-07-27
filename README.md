@@ -6,7 +6,7 @@ A modern and responsive Social Media SaaS platform built using **Next.js 16**, *
 
 ## 🚀 Live Demo
 
-https://global-nf6rn7n0v-praful-singhs-projects.vercel.app/
+https://global-co.vercel.app/
 
 ---
 
